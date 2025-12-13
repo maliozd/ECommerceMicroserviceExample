@@ -16,7 +16,7 @@ internal class DeleteProductCommandHandler(IDocumentSession session, ILogger<Del
         }
 
         session.Delete<Product>(command.Id);
-        await session.SaveChangesAsync();
+        await session.SaveChangesAsync(cancellationToken);
         return new DeleteProductResult(true);
     }
 }

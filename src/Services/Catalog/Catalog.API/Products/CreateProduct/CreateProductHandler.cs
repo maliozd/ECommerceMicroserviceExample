@@ -1,4 +1,6 @@
 ﻿
+using FluentValidation;
+
 namespace Catalog.API.Products.CreateProduct
 {
     public record CreateProductCommand(
@@ -8,10 +10,14 @@ namespace Catalog.API.Products.CreateProduct
         decimal Price,
         List<string> Category) : ICommand<CreateProductResult>;
     public record CreateProductResult(Guid Id);
-    internal class CreateProductHandler(IDocumentSession documentSession) : ICommandHandler<CreateProductCommand, CreateProductResult>
+
+    internal class CreateProductCommandHandler(IDocumentSession documentSession, IValidator<CreateProductCommand> validator, ILogger<CreateProductCommandHandler> logger)
+                  : ICommandHandler<CreateProductCommand, CreateProductResult>
     {
         public async Task<CreateProductResult> Handle(CreateProductCommand command, CancellationToken cancellationToken)
         {
+            logger.LogInformation("CreateProductCommandHandler.Handle called with {@Command}", command);
+
             var product = new Product()
             {
                 Name = command.Name,
@@ -26,5 +32,7 @@ namespace Catalog.API.Products.CreateProduct
 
             return new CreateProductResult(product.Id);
         }
+
+
     }
 }
